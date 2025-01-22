@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 50px;
+            background-color: white;
         }
         #counter {
             font-size: 2em;
@@ -29,27 +30,44 @@
             margin-top: 40px;
             position: relative;
             height: 200px;
-            background-color: black;
+            background-color: white;
             overflow: hidden;
         }
         .firework {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background-color: yellow;
-            animation: explode 1.5s infinite ease-in-out;
+            width: 20px;
+            height: 20px;
+            background-color: #ff4500;
+            border-radius: 50%;
+            opacity: 0;
+            animation: firework-animation 1.5s ease-out infinite;
         }
-        @keyframes explode {
-            0% { opacity: 1; transform: translate(0, 0); }
-            100% { opacity: 0; transform: translate(calc(var(--x) * 50px), calc(var(--y) * 50px)); }
+        @keyframes firework-animation {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                opacity: 0.6;
+                transform: translate(var(--x), var(--y)) scale(1.5);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--x), var(--y)) scale(0);
+            }
+        }
+        #birthdate {
+            font-size: 1.5em;
+            padding: 10px;
+            width: 250px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <h1>Laiks līdz pensijai</h1>
     <p>Ievadiet savu dzimšanas datumu:</p>
-    <input type="date" id="birthdate">
-    <button onclick="calculatePension()">Skatīt</button>
+    <input type="date" id="birthdate" onchange="calculatePension()" value="1971-01-05">
     <div id="counter"></div>
     <div id="workdays"></div>
     <div id="motivational-text">Strādāt, strādāt un vēlreiz strādāt!</div>
@@ -70,6 +88,11 @@
 
         function calculatePension() {
             const birthdate = new Date(document.getElementById("birthdate").value);
+            if (isNaN(birthdate)) return; // Ja datums nav ievadīts, neturpināt
+
+            // Pārstartē lapu pēc jauna datuma ievadīšanas
+            window.location.reload();
+
             const pensionAge = 65;
             const pensionDate = new Date(birthdate);
             pensionDate.setFullYear(pensionDate.getFullYear() + pensionAge);
