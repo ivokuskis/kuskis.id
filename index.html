@@ -175,8 +175,11 @@
 
                 // Aprēķinām atvaļinājuma dienas proporcijas
                 const vacationPerYear = 20;
-                vacationDays = Math.round((vacationPerYear / 365) * (days)); 
+                vacationDays = Math.round((vacationPerYear / 365) * (totalDaysRemaining)); 
 
+                // Atņemam atvaļinājuma dienas no darba dienām
+                const remainingWorkdays = workdays - vacationDays;
+                
                 // Donoru dienas, ja ir
                 const yearsToPension = pensionDate.getFullYear() - new Date().getFullYear();
                 donorDaysMen = Math.round((yearsToPension * 6) * (totalDaysRemaining / (365 * yearsToPension)));
@@ -197,6 +200,11 @@
                     `Darba dienu skaits līdz pensijai: <b>${workdays}</b> darba dienas`;
                 document.getElementById("vacation").innerHTML = 
                     `Atvaļinājuma dienas (darba dienās): <b>${vacationDays}</b> darba dienas`;
+                document.getElementById("remaining-days").innerHTML = 
+                    `Ja neslimo un nekas cits nenotiek, vēl jāstrādā: <b>${remainingWorkdays}</b> darba dienas līdz pensijai`;
+
+
+                
                 document.getElementById("sleep-time").innerHTML = 
                     `Paredzamās gulētās stundas: <b>${sleepHours}</b> <span class="icon icon-sleep">🛌</span>`;
                 document.getElementById("donor-days").innerHTML = 
