@@ -186,19 +186,21 @@
                 const militaryDays = yearsToPension * 5;
 
                 document.getElementById("workdays").innerHTML = 
-                    `Darba dienu skaits līdz pensijai: <b>${workdays}</b>`;
+                    `Darba dienu skaits: <b>${workdays}</b>`;
+document.getElementById("sleep-time").innerHTML = 
+                    `Paredzamās gulētās stundas: <b>${sleepHours}</b> <span class="icon icon-sleep">🛌</span>`;
+                
                 document.getElementById("vacation").innerHTML = 
-                    `Nopelnītās atvaļinājuma dienas: <b>${vacationDays}</b> <span class="icon icon-beach">🏖️</span>`;
+                    `Vēl nopelnīsi atvaļinājuma dienas: <b>${vacationDays}</b> <span class="icon icon-beach">🏖️</span>`;
                 document.getElementById("donor-days").innerHTML = 
-                    `Donoru brīvdienas: <b>vīriešiem - ${donorDaysMen}</b>, <b>sievietēm - ${donorDaysWomen}</b>` + 
+                    `Donoru brīvdienas, ja ziedosi asinis: <b>vīriešiem (6x gadā)- ${donorDaysMen}</b>, <b>sievietēm (4x gadā) - ${donorDaysWomen}</b>` + 
                     ` <a href="https://www.vadc.lv/donoriem/donora-pieteikums" target="_blank" class="button-link">Pieteikties</a>`;
                 document.getElementById("military-days").innerHTML = 
-                    `Zemessardzes kolektīvās apmācības dienas: <b>${militaryDays}</b>` +
+                    `Zemessardzes kolektīvās apmācībā dienas, ko kompensēs valsts darba devējam: <b>${militaryDays}</b>` +
                     ` <a href="https://www.klustikaravirs.lv/pieteikties" target="_blank" class="button-link">Pieteikties</a>`;
-                document.getElementById("sleep-time").innerHTML = 
-                    `Paredzamās gulētās stundas: <b>${sleepHours}</b> <span class="icon icon-sleep">🛌</span>`;
+                
                 document.getElementById("sick-days").innerHTML = 
-                    `Valsts apmaksātās slimības dienas: <b>${totalSickDays}</b> <span class="icon icon-medical">⛑️</span>`;
+                    `Statistiski valsts apmaksātās slimības dienas: <b>${totalSickDays}</b> <span class="icon icon-medical">⛑️</span>`;
             }
 
             updateCounter();
