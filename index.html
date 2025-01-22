@@ -200,7 +200,8 @@
                 militaryDays = Math.round((yearsToPension * 5) * (totalDaysRemaining / (365 * yearsToPension)));
 
                 // Atjauninām HTML elementus
-
+                document.getElementById("workdays").innerHTML = 
+                    `Darba dienu skaits līdz pensijai: <b>${workdays}</b> darba dienas`;
                 
                 document.getElementById("vacation").innerHTML = 
                     `Vēl nopelnīsi atvaļinājumu : <b>${vacationDays}</b> darba dienas`;
@@ -221,8 +222,7 @@
                 
                 document.getElementById("sick-days").innerHTML = 
                     `Statistiski valsts apmaksātās slimības dienas: <b>${sickDays}</b> <span class="icon icon-medical">⛑️</span>`;
-                document.getElementById("workdays").innerHTML = 
-                    `Darba dienu skaits līdz pensijai: <b>${workdays}</b> darba dienas`;                
+                
             }
 
             updateCounter();
