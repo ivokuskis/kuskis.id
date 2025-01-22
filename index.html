@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="lv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,107 +8,202 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f3f9ff;
+            margin-top: 50px;
+            background-color: white;
+        }
+        #counter, #workdays, #vacation, #donor-days, #military-days, #sleep-time, #sick-days {
+            margin-top: 20px;
+            font-size: 1.5em;
             color: #333;
         }
-        input {
+        #motivational-text {
+            margin-top: 30px;
+            font-size: 1.8em;
+            color: #ff4500;
+            font-weight: bold;
+        }
+        #birthdate {
+            font-size: 1.5em;
             padding: 10px;
-            font-size: 16px;
             width: 250px;
-            margin: 10px;
+            margin-top: 10px;
         }
-        .progress-bar {
-            width: 80%;
-            background-color: #e0e0e0;
-            border-radius: 25px;
-            margin: 20px auto;
-            position: relative;
-            height: 30px;
+        #date-format {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #555;
         }
-        .progress-bar-fill {
-            height: 100%;
-            background-color: #76c7c0;
-            border-radius: 25px;
-            width: 0%;
-            text-align: center;
-            line-height: 30px;
+        #calculate-button {
+            margin-left: 10px;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            background-color: #28a745;
             color: white;
-            font-weight: bold;
-            transition: width 1s ease-in-out;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
-        .clock {
-            font-size: 24px;
-            margin: 20px 0;
-            font-weight: bold;
+        #calculate-button:hover {
+            background-color: #218838;
+        }
+        .icon {
+            margin-left: 10px;
+            font-size: 1.2em;
+        }
+        .icon-beach {
+            color: #ffa500;
+        }
+        .icon-heart {
+            color: #ff0000;
+            animation: heartbeat 1s infinite;
+        }
+        .icon-sleep {
+            color: #1e90ff;
+        }
+        .icon-medical {
+            color: #ff0000;
+        }
+        .icon-military {
+            color: #006400;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .button-link {
+            display: inline-block;
+            font-size: 1em;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .button-link:hover {
+            background-color: #0056b3;
+        }
+        #disclaimer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #555;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
     <h1>Laiks līdz pensijai</h1>
-    <label for="birthDate">Ievadi savu dzimšanas datumu (MM/DD/GGGG):</label>
-    <input type="date" id="birthDate" />
-    <button onclick="calculateRetirement()">Skatīt</button>
-
-    <div id="results">
-        <h2 id="timeRemaining"></h2>
-        <div class="progress-bar">
-            <div class="progress-bar-fill" id="progressFill">0%</div>
-        </div>
-        <div class="clock" id="clock"></div>
-    </div>
+    <p>Ievadiet savu dzimšanas datumu:</p>
+    <input type="date" id="birthdate" value="1971-01-05">
+    <button id="calculate-button" onclick="calculatePension()">Skatīt</button>
+    <p id="date-format">Formāts: mm/dd/gggg</p>
+    <div id="counter"></div>
+    <div id="workdays"></div>
+    <div id="vacation"></div>
+    <div id="donor-days"></div>
+    <div id="military-days"></div>
+    <div id="sleep-time"></div>
+    <div id="sick-days"></div>
+    <div id="motivational-text">Strādāt, strādāt un vēlreiz strādāt!</div>
+    <div id="disclaimer">* Aprēķini ir informatīvi un balstās uz vidējiem statistikas datiem.</div>
 
     <script>
-        function calculateRetirement() {
-            const birthDateInput = document.getElementById("birthDate").value;
-            const birthDate = new Date(birthDateInput);
-            const retirementAge = 65;
-            const currentDate = new Date();
+        const publicHolidays = [
+            '2025-01-01', '2025-04-06', '2025-04-07', '2025-05-01',
+            '2025-05-04', '2025-06-23', '2025-06-24', '2025-11-18',
+            '2025-12-24', '2025-12-25', '2025-12-26', '2025-12-31'
+        ];
 
-            // Check if input is valid
-            if (!birthDateInput || birthDate > currentDate) {
-                alert("Lūdzu ievadi derīgu dzimšanas datumu!");
+        let interval;
+
+        function isWorkday(date) {
+            const day = date.getDay();
+            const dateString = date.toISOString().split('T')[0];
+            return day !== 0 && day !== 6 && !publicHolidays.includes(dateString);
+        }
+
+        function calculatePension() {
+            const birthdateInput = document.getElementById("birthdate");
+            const birthdate = new Date(birthdateInput.value);
+            if (isNaN(birthdate)) {
+                alert("Lūdzu ievadiet derīgu dzimšanas datumu!");
                 return;
             }
 
-            const retirementDate = new Date(
-                birthDate.getFullYear() + retirementAge,
-                birthDate.getMonth(),
-                birthDate.getDate()
-            );
+            const pensionAge = 65;
+            const pensionDate = new Date(birthdate);
+            pensionDate.setFullYear(pensionDate.getFullYear() + pensionAge);
 
-            const totalLifetime = retirementDate - birthDate;
-            const timeLived = currentDate - birthDate;
-            const timeRemaining = retirementDate - currentDate;
+            clearInterval(interval);
+            document.getElementById("counter").innerHTML = "";
+            document.getElementById("workdays").innerHTML = "";
+            document.getElementById("vacation").innerHTML = "";
+            document.getElementById("donor-days").innerHTML = "";
+            document.getElementById("military-days").innerHTML = "";
+            document.getElementById("sleep-time").innerHTML = "";
+            document.getElementById("sick-days").innerHTML = "";
 
-            // Update progress bar
-            const percentageLived = Math.min((timeLived / totalLifetime) * 100, 100).toFixed(2);
-            const progressFill = document.getElementById("progressFill");
-            progressFill.style.width = percentageLived + "%";
-            progressFill.textContent = percentageLived + "%";
-
-            // Update time remaining
-            const daysRemaining = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-            const hoursRemaining = Math.floor((timeRemaining / (1000 * 60 * 60)) % 24);
-            const minutesRemaining = Math.floor((timeRemaining / (1000 * 60)) % 60);
-            const secondsRemaining = Math.floor((timeRemaining / 1000) % 60);
-
-            document.getElementById("timeRemaining").textContent =
-                `Līdz pensijai atlicis: ${daysRemaining} dienas, ${hoursRemaining} stundas, ${minutesRemaining} minūtes, ${secondsRemaining} sekundes.`;
-
-            // Update clock dynamically
-            function updateClock() {
+            function updateCounter() {
                 const now = new Date();
-                const updatedTimeRemaining = retirementDate - now;
+                const timeLeft = pensionDate - now;
 
-                const seconds = Math.floor((updatedTimeRemaining / 1000) % 60);
-                const minutes = Math.floor((updatedTimeRemaining / (1000 * 60)) % 60);
-                const hours = Math.floor((updatedTimeRemaining / (1000 * 60 * 60)) % 24);
+                if (timeLeft <= 0) {
+                    document.getElementById("counter").innerText = "Jūs jau esat pensijā!";
+                    clearInterval(interval);
+                    return;
+                }
 
-                document.getElementById("clock").textContent =
-                    `Sekundes līdz pensijai: ${hours}:${minutes}:${seconds}`;
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+                const seconds = Math.floor((timeLeft / 1000) % 60);
+
+                document.getElementById("counter").innerHTML = 
+                    `Atlikušais laiks līdz pensijai: <b>${days}</b> dienas, <b>${hours}</b> stundas, <b>${minutes}</b> minūtes, <b>${seconds}</b> sekundes`;
             }
 
-            setInterval(updateClock, 1000);
+            function calculateWorkdaysAndExtras() {
+                let workdays = 0;
+                let currentDate = new Date();
+                while (currentDate <= pensionDate) {
+                    if (isWorkday(currentDate)) {
+                        workdays++;
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+
+                const vacationDays = Math.floor(workdays / 250) * 20;
+                const sleepHours = workdays * 8;
+
+                const yearsToPension = pensionDate.getFullYear() - new Date().getFullYear();
+                const donorDaysMen = yearsToPension * 6;
+                const donorDaysWomen = yearsToPension * 4;
+
+                const sickDaysPerYear = 10000000 / 886000;
+                const totalSickDays = Math.floor(yearsToPension * sickDaysPerYear);
+
+                const militaryDays = yearsToPension * 5;
+
+                document.getElementById("workdays").innerHTML = 
+                    `Darba dienu skaits līdz pensijai: <b>${workdays}</b>`;
+                document.getElementById("vacation").innerHTML = 
+                    `Nopelnītās atvaļinājuma dienas: <b>${vacationDays}</b> <span class="icon icon-beach">🏖️</span>`;
+                document.getElementById("donor-days").innerHTML = 
+                    `Donoru brīvdienas: <b>vīriešiem - ${donorDaysMen}</b>, <b>sievietēm - ${donorDaysWomen}</b>` + 
+                    ` <a href="https://www.vadc.lv/donoriem/donora-pieteikums" target="_blank" class="button-link">Pieteikties</a>`;
+                document.getElementById("military-days").innerHTML = 
+                    `Zemessardzes kolektīvās apmācības dienas: <b>${militaryDays}</b>` +
+                    ` <a href="https://www.klustikaravirs.lv/pieteikties" target="_blank" class="button-link">Pieteikties</a>`;
+                document.getElementById("sleep-time").innerHTML = 
+                    `Paredzamās gulētās stundas: <b>${sleepHours}</b> <span class="icon icon-sleep">🛌</span>`;
+                document.getElementById("sick-days").innerHTML = 
+                    `Valsts apmaksātās slimības dienas: <b>${totalSickDays}</b> <span class="icon icon-medical">⛑️</span>`;
+            }
+
+            updateCounter();
+            calculateWorkdaysAndExtras();
+            interval = setInterval(updateCounter, 1000);
         }
     </script>
 </body>
