@@ -103,21 +103,11 @@
 
     <div id="motivational-text">Strādāt, strādāt un vēlreiz strādāt!</div>
     <div id="disclaimer">* Aprēķini ir informatīvi, ne pārāk nopietni un balstās uz aptuveniem statistikas datiem.</div>
-    <!-- Apmeklētāju skaitītājs -->
-    <div id="visitor-counter"></div> 
+   
 
     
     <script>
-        // Apmeklētāju skaitītāja funkcija
-        function updateVisitorCounter() {
-            let visitorCount = localStorage.getItem("visitorCount");
-            if (visitorCount === null) {
-                visitorCount = 0;  // Ja nav ieraksta, iestata 0
-            }
-            visitorCount++;  // Katram apmeklētājam palielina skaitu
-            localStorage.setItem("visitorCount", visitorCount);  // Saglabā apmeklētāju skaitu
-            document.getElementById("visitor-counter").innerText = `Apmeklētāju skaits: ${visitorCount}`;
-        }
+        
 
         // Izsaukt funkciju, lai atjauninātu apmeklētāju skaitītāju
         updateVisitorCounter();
