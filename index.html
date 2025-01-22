@@ -104,6 +104,20 @@
     <div id="disclaimer">* Aprēķini ir informatīvi, ne pārāk nopietni un balstās uz aptuveniem statistikas datiem.</div>
 
     <script>
+
+               // Apmeklētāju skaitītāja funkcija
+        function updateVisitorCounter() {
+            let visitorCount = localStorage.getItem("visitorCount");
+            if (visitorCount === null) {
+                visitorCount = 0;  // Ja nav ieraksta, iestata 0
+            }
+            visitorCount++;  // Katram apmeklētājam palielina skaitu
+            localStorage.setItem("visitorCount", visitorCount);  // Saglabā apmeklētāju skaitu
+            document.getElementById("visitor-counter").innerText = `Apmeklētāju skaits: ${visitorCount}`;
+        }
+
+        // Izsaukt funkciju, lai atjauninātu apmeklētāju skaitītāju
+        updateVisitorCounter();
         const publicHolidays = [
             '2025-01-01', '2025-04-06', '2025-04-07', '2025-05-01',
             '2025-05-04', '2025-06-23', '2025-06-24', '2025-11-18',
