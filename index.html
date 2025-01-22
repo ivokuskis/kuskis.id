@@ -53,10 +53,6 @@
         .icon-beach {
             color: #ffa500;
         }
-        .icon-heart {
-            color: #ff0000;
-            animation: heartbeat 1s infinite;
-        }
         .icon-sleep {
             color: #1e90ff;
         }
@@ -65,10 +61,6 @@
         }
         .icon-military {
             color: #006400;
-        }
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
         }
         .button-link {
             display: inline-block;
@@ -173,23 +165,22 @@
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
 
-                const vacationDays = Math.floor(workdays / 250) * 20;
-                const sleepHours = workdays * 8;
-
+                const totalDaysRemaining = Math.floor((pensionDate - new Date()) / (1000 * 60 * 60 * 24));
+                const vacationDays = Math.round((totalDaysRemaining / 250) * 20);
+                const sleepHours = Math.round((totalDaysRemaining * 8));
                 const yearsToPension = pensionDate.getFullYear() - new Date().getFullYear();
-                const donorDaysMen = yearsToPension * 6;
-                const donorDaysWomen = yearsToPension * 4;
+                const donorDaysMen = Math.round((yearsToPension * 6) * (totalDaysRemaining / (365 * yearsToPension)));
+                const donorDaysWomen = Math.round((yearsToPension * 4) * (totalDaysRemaining / (365 * yearsToPension)));
 
                 const sickDaysPerYear = 10000000 / 886000;
-                const totalSickDays = Math.floor(yearsToPension * sickDaysPerYear);
+                const totalSickDays = Math.round((totalDaysRemaining / 365) * sickDaysPerYear);
 
-                const militaryDays = yearsToPension * 5;
+                const militaryDays = Math.round((yearsToPension * 5) * (totalDaysRemaining / (365 * yearsToPension)));
 
                 document.getElementById("workdays").innerHTML = 
                     `Darba dienu skaits: <b>${workdays}</b>`;
-document.getElementById("sleep-time").innerHTML = 
+                document.getElementById("sleep-time").innerHTML = 
                     `Paredzamās gulētās stundas: <b>${sleepHours}</b> <span class="icon icon-sleep">🛌</span>`;
-                
                 document.getElementById("vacation").innerHTML = 
                     `Vēl nopelnīsi atvaļinājuma dienas: <b>${vacationDays}</b> <span class="icon icon-beach">🏖️</span>`;
                 document.getElementById("donor-days").innerHTML = 
@@ -198,7 +189,6 @@ document.getElementById("sleep-time").innerHTML =
                 document.getElementById("military-days").innerHTML = 
                     `Zemessardzes kolektīvās apmācībā dienas, ko kompensēs valsts darba devējam: <b>${militaryDays}</b>` +
                     ` <a href="https://www.klustikaravirs.lv/pieteikties" target="_blank" class="button-link">Pieteikties</a>`;
-                
                 document.getElementById("sick-days").innerHTML = 
                     `Statistiski valsts apmaksātās slimības dienas: <b>${totalSickDays}</b> <span class="icon icon-medical">⛑️</span>`;
             }
