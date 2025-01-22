@@ -14,6 +14,35 @@
             font-size: 2em;
             color: #333;
         }
+        #workdays {
+            margin-top: 20px;
+            font-size: 1.5em;
+            color: #555;
+        }
+        #motivational-text {
+            margin-top: 30px;
+            font-size: 1.8em;
+            color: #ff4500;
+            font-weight: bold;
+        }
+        #fireworks {
+            margin-top: 40px;
+            position: relative;
+            height: 200px;
+            background-color: black;
+            overflow: hidden;
+        }
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background-color: yellow;
+            animation: explode 1.5s infinite ease-in-out;
+        }
+        @keyframes explode {
+            0% { opacity: 1; transform: translate(0, 0); }
+            100% { opacity: 0; transform: translate(calc(var(--x) * 50px), calc(var(--y) * 50px)); }
+        }
     </style>
 </head>
 <body>
@@ -22,8 +51,23 @@
     <input type="date" id="birthdate">
     <button onclick="calculatePension()">Skatīt</button>
     <div id="counter"></div>
+    <div id="workdays"></div>
+    <div id="motivational-text">Strādāt, strādāt un vēlreiz strādāt!</div>
+    <div id="fireworks"></div>
 
     <script>
+        const publicHolidays = [
+            '2025-01-01', '2025-04-06', '2025-04-07', '2025-05-01',
+            '2025-05-04', '2025-06-23', '2025-06-24', '2025-11-18',
+            '2025-12-24', '2025-12-25', '2025-12-26', '2025-12-31'
+        ];
+
+        function isWorkday(date) {
+            const day = date.getDay();
+            const dateString = date.toISOString().split('T')[0];
+            return day !== 0 && day !== 6 && !publicHolidays.includes(dateString);
+        }
+
         function calculatePension() {
             const birthdate = new Date(document.getElementById("birthdate").value);
             const pensionAge = 65;
@@ -36,6 +80,7 @@
 
                 if (timeLeft <= 0) {
                     document.getElementById("counter").innerText = "Jūs jau esat pensijā!";
+                    document.getElementById("workdays").innerText = "";
                     clearInterval(interval);
                     return;
                 }
@@ -49,8 +94,37 @@
                     `Atlikušais laiks līdz pensijai: ${days} dienas, ${hours} stundas, ${minutes} minūtes, ${seconds} sekundes`;
             }
 
+            function calculateWorkdays() {
+                let workdays = 0;
+                let currentDate = new Date();
+                while (currentDate <= pensionDate) {
+                    if (isWorkday(currentDate)) {
+                        workdays++;
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+                document.getElementById("workdays").innerText = `Darba dienu skaits līdz pensijai: ${workdays}`;
+            }
+
             updateCounter();
+            calculateWorkdays();
             const interval = setInterval(updateCounter, 1000);
+
+            createFireworks();
+        }
+
+        function createFireworks() {
+            const fireworksContainer = document.getElementById('fireworks');
+            fireworksContainer.innerHTML = '';
+            for (let i = 0; i < 50; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.setProperty('--x', Math.random() * 2 - 1);
+                firework.style.setProperty('--y', Math.random() * 2 - 1);
+                firework.style.left = `${Math.random() * 100}%`;
+                firework.style.top = `${Math.random() * 100}%`;
+                fireworksContainer.appendChild(firework);
+            }
         }
     </script>
 </body>
