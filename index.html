@@ -135,7 +135,6 @@
             document.getElementById("military-days").innerHTML = "";
             document.getElementById("sleep-time").innerHTML = "";
             document.getElementById("sick-days").innerHTML = "";
-            document.getElementById("remaining-days").innerHTML = "";
 
             function updateCounter() {
                 const now = new Date();
@@ -158,32 +157,15 @@
 
             function calculateWorkdaysAndExtras() {
                 let workdays = 0;
-                let currentDate = new Date();
-                while (currentDate <= pensionDate) {
-                    if (isWorkday(currentDate)) {
-                        workdays++;
-                    }
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-
-                const totalDaysRemaining = Math.floor((pensionDate - new Date()) / (1000 * 60 * 60 * 24));
-                
-                const sleepHours = Math.round((totalDaysRemaining * 8));
-                const yearsToPension = pensionDate.getFullYear() - new Date().getFullYear();
-                const donorDaysMen = Math.round((yearsToPension * 6) * (totalDaysRemaining / (365 * yearsToPension)));
-                const donorDaysWomen = Math.round((yearsToPension * 4) * (totalDaysRemaining / (365 * yearsToPension)));
-
-                const sickDaysPerYear = 10000000 / 886000;
-                const totalSickDays = Math.round((totalDaysRemaining / 365) * sickDaysPerYear);
-
-                const militaryDays = Math.round((yearsToPension * 5) * (totalDaysRemaining / (365 * yearsToPension)));
-
-         function calculateWorkdaysAndVacation() {
-                let workdays = 0;
                 let vacationDays = 0;
+                let donorDaysMen = 0;
+                let donorDaysWomen = 0;
+                let militaryDays = 0;
+                let sickDays = 0;
+                let sleepHours = 0;
                 let currentDate = new Date();
-
-                // Skaita darba dienas līdz pensijai
+                const totalDaysRemaining = Math.floor((pensionDate - currentDate) / (1000 * 60 * 60 * 24));
+                
                 while (currentDate <= pensionDate) {
                     if (isWorkday(currentDate)) {
                         workdays++;
@@ -191,28 +173,32 @@
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
 
-                // Likuma prasības: 20 darba dienas gadā atvaļinājums
+                // Aprēķinām atvaļinājuma dienas proporcijas
                 const vacationPerYear = 20;
-                const yearsToPension = pensionDate.getFullYear() - new Date().getFullYear();
-                
-                // Aprēķinām atlikušās atvaļinājuma dienas proporcionāli atlikušajām darba dienām
                 vacationDays = Math.round((vacationPerYear / 365) * (workdays)); 
 
-                // Atņemam atvaļinājuma dienas no darba dienām
-                const remainingWorkdays = workdays - vacationDays;
+                // Donoru dienas, ja ir
+                const yearsToPension = pensionDate.getFullYear() - new Date().getFullYear();
+                donorDaysMen = Math.round((yearsToPension * 6) * (totalDaysRemaining / (365 * yearsToPension)));
+                donorDaysWomen = Math.round((yearsToPension * 4) * (totalDaysRemaining / (365 * yearsToPension)));
 
+                // Paredzētās slimības dienas
+                const sickDaysPerYear = 10000000 / 886000;
+                sickDays = Math.round((totalDaysRemaining / 365) * sickDaysPerYear);
 
-                
+                // Paredzamās gulētās stundas
+                sleepHours = Math.round((totalDaysRemaining * 8));
+
+                // Militārās dienas
+                militaryDays = Math.round((yearsToPension * 5) * (totalDaysRemaining / (365 * yearsToPension)));
+
+                // Atjauninām HTML elementus
                 document.getElementById("workdays").innerHTML = 
                     `Darba dienu skaits līdz pensijai: <b>${workdays}</b> darba dienas`;
                 document.getElementById("vacation").innerHTML = 
                     `Atvaļinājuma dienas (darba dienās): <b>${vacationDays}</b> darba dienas`;
-                document.getElementById("remaining-days").innerHTML = 
-                    `Ja neslimo un nekas cits nenotiek, vēl jāstrādā: <b>${remainingWorkdays}</b> darba dienas līdz pensijai`;
                 document.getElementById("sleep-time").innerHTML = 
                     `Paredzamās gulētās stundas: <b>${sleepHours}</b> <span class="icon icon-sleep">🛌</span>`;
-                document.getElementById("vacation").innerHTML = 
-                    `Vēl nopelnīsi atvaļinājuma dienas: <b>${vacationDays}</b> <span class="icon icon-beach">🏖️</span>`;
                 document.getElementById("donor-days").innerHTML = 
                     `Donoru brīvdienas, ja ziedosi asinis: <b>vīriešiem (6x gadā)- ${donorDaysMen}</b>, <b>sievietēm (4x gadā) - ${donorDaysWomen}</b>` + 
                     ` <a href="https://www.vadc.lv/donoriem/donora-pieteikums" target="_blank" class="button-link">Pieteikties</a>`;
@@ -220,7 +206,7 @@
                     `Zemessardzes kolektīvās apmācībā dienas, ko kompensēs valsts darba devējam: <b>${militaryDays}</b>` +
                     ` <a href="https://www.klustikaravirs.lv/pieteikties" target="_blank" class="button-link">Pieteikties</a>`;
                 document.getElementById("sick-days").innerHTML = 
-                    `Statistiski valsts apmaksātās slimības dienas: <b>${totalSickDays}</b> <span class="icon icon-medical">⛑️</span>`;
+                    `Statistiski valsts apmaksātās slimības dienas: <b>${sickDays}</b> <span class="icon icon-medical">⛑️</span>`;
             }
 
             updateCounter();
