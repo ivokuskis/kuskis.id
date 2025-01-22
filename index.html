@@ -11,7 +11,7 @@
             margin-top: 50px;
             background-color: white;
         }
-        #counter, #workdays, #vacation, #donor-days, #military-days, #sleep-time, #sick-days, #remaining-days {
+        #counter, #workdays, #vacation, #donor-days, #military-days, #sleep-time, #sick-days, #remaining-days, #visitor-counter {
             margin-top: 20px;
             font-size: 1.5em;
             color: #333;
@@ -93,19 +93,34 @@
     <div id="counter"></div>
     <div id="workdays"></div>
     <div id="vacation"></div>
-      <div id="remaining-days"></div>
-        <div id="sleep-time"></div>
+    <div id="remaining-days"></div>
+    <div id="sleep-time"></div>
     <div id="donor-days"></div>
     <div id="military-days"></div>
-
     <div id="sick-days"></div>
   
+    <!-- Apmeklētāju skaitītājs -->
+    <div id="visitor-counter"></div> 
+
     <div id="motivational-text">Strādāt, strādāt un vēlreiz strādāt!</div>
     <div id="disclaimer">* Aprēķini ir informatīvi, ne pārāk nopietni un balstās uz aptuveniem statistikas datiem.</div>
 
     <script>
+        // Apmeklētāju skaitītāja funkcija
+        function updateVisitorCounter() {
+            let visitorCount = localStorage.getItem("visitorCount");
+            if (visitorCount === null) {
+                visitorCount = 0;  // Ja nav ieraksta, iestata 0
+            }
+            visitorCount++;  // Katram apmeklētājam palielina skaitu
+            localStorage.setItem("visitorCount", visitorCount);  // Saglabā apmeklētāju skaitu
+            document.getElementById("visitor-counter").innerText = `Apmeklētāju skaits: ${visitorCount}`;
+        }
 
+        // Izsaukt funkciju, lai atjauninātu apmeklētāju skaitītāju
+        updateVisitorCounter();
 
+        // Jūsu esošais kods sākas šeit
         const publicHolidays = [
             '2025-01-01', '2025-04-06', '2025-04-07', '2025-05-01',
             '2025-05-04', '2025-06-23', '2025-06-24', '2025-11-18',
@@ -205,27 +220,27 @@
 
                 // Atjauninām HTML elementus
                 document.getElementById("workdays").innerHTML = 
-                    `Darba dienu skaits līdz pensijai: <b>${workdays}</b> darba dienas`;
+                    `Darba dienu skaits līdz pensijai: <b>${workdays}</b> darba dienas` ;
                 
                 document.getElementById("vacation").innerHTML = 
-                    `Vēl nopelnīsi atvaļinājumu : <b>${vacationDays}</b> darba dienas`;
+                    `Vēl nopelnīsi atvaļinājumu : <b>${vacationDays}</b> darba dienas` ;
                 
                 document.getElementById("remaining-days").innerHTML = 
-                    `Ja neslimo un nekas cits nenotiek, vēl jāstrādā: <b>${remainingWorkdays}</b> darba dienas līdz pensijai`;
+                    `Ja neslimo un nekas cits nenotiek, vēl jāstrādā: <b>${remainingWorkdays}</b> darba dienas līdz pensijai` ;
                 
                 document.getElementById("sleep-time").innerHTML = 
-                    `Paredzamās gulētās stundas: <b>${sleepHours}</b> <span class="icon icon-sleep">🛌</span>`;
+                    `Paredzamās gulētās stundas: <b>${sleepHours}</b> <span class="icon icon-sleep">🛌</span>` ;
                 
                 document.getElementById("donor-days").innerHTML = 
                     `Donoru brīvdienas, ja ziedosi asinis: <b>vīriešiem (6x gadā)- ${donorDaysMen}</b>, <b>sievietēm (4x gadā) - ${donorDaysWomen}</b>` + 
-                    ` <a href="https://www.vadc.lv/donoriem/donora-pieteikums" target="_blank" class="button-link">Pieteikties</a>`;
+                    ` <a href="https://www.vadc.lv/donoriem/donora-pieteikums" target="_blank" class="button-link">Pieteikties</a>` ;
                 
                 document.getElementById("military-days").innerHTML = 
                     `Zemessardzes kolektīvās apmācībā dienas, ko kompensēs valsts darba devējam: <b>${militaryDays}</b>` +
-                    ` <a href="https://www.klustikaravirs.lv/pieteikties" target="_blank" class="button-link">Pieteikties</a>`;
+                    ` <a href="https://www.klustikaravirs.lv/pieteikties" target="_blank" class="button-link">Pieteikties</a>` ;
                 
                 document.getElementById("sick-days").innerHTML = 
-                    `Statistiski valsts apmaksātās slimības dienas: <b>${sickDays}</b> <span class="icon icon-medical">⛑️</span>`;
+                    `Statistiski valsts apmaksātās slimības dienas: <b>${sickDays}</b> <span class="icon icon-medical">⛑️</span>` ;
                 
             }
 
