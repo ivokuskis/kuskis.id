@@ -62,23 +62,40 @@
             width: 250px;
             margin-top: 10px;
         }
+        #calculate-button {
+            margin-top: 15px;
+            font-size: 1.2em;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #calculate-button:hover {
+            background-color: #218838;
+        }
     </style>
 </head>
 <body>
     <h1>Laiks līdz pensijai</h1>
     <p>Ievadiet savu dzimšanas datumu:</p>
-    <input type="date" id="birthdate" onchange="calculatePension()" value="1971-01-05">
+    <input type="date" id="birthdate">
+    <button id="calculate-button" onclick="calculatePension()">Skatīt</button>
     <div id="counter"></div>
     <div id="workdays"></div>
     <div id="motivational-text">Strādāt, strādāt un vēlreiz strādāt!</div>
     <div id="fireworks"></div>
 
     <script>
+        // Latvijas valsts svētku dienas
         const publicHolidays = [
             '2025-01-01', '2025-04-06', '2025-04-07', '2025-05-01',
             '2025-05-04', '2025-06-23', '2025-06-24', '2025-11-18',
             '2025-12-24', '2025-12-25', '2025-12-26', '2025-12-31'
         ];
+
+        let interval;
 
         function isWorkday(date) {
             const day = date.getDay();
@@ -87,15 +104,22 @@
         }
 
         function calculatePension() {
-            const birthdate = new Date(document.getElementById("birthdate").value);
-            if (isNaN(birthdate)) return; // Ja datums nav ievadīts, neturpināt
-
-            // Pārstartē lapu pēc jauna datuma ievadīšanas
-            window.location.reload();
+            const birthdateInput = document.getElementById("birthdate");
+            const birthdate = new Date(birthdateInput.value);
+            if (isNaN(birthdate)) {
+                alert("Lūdzu ievadiet derīgu dzimšanas datumu!");
+                return;
+            }
 
             const pensionAge = 65;
             const pensionDate = new Date(birthdate);
             pensionDate.setFullYear(pensionDate.getFullYear() + pensionAge);
+
+            // Notīrām vecos aprēķinus un apturam intervālus
+            clearInterval(interval);
+            document.getElementById("counter").innerHTML = "";
+            document.getElementById("workdays").innerHTML = "";
+            document.getElementById("fireworks").innerHTML = "";
 
             function updateCounter() {
                 const now = new Date();
@@ -131,19 +155,18 @@
 
             updateCounter();
             calculateWorkdays();
-            const interval = setInterval(updateCounter, 1000);
+            interval = setInterval(updateCounter, 1000);
 
             createFireworks();
         }
 
         function createFireworks() {
             const fireworksContainer = document.getElementById('fireworks');
-            fireworksContainer.innerHTML = '';
             for (let i = 0; i < 50; i++) {
                 const firework = document.createElement('div');
                 firework.className = 'firework';
-                firework.style.setProperty('--x', Math.random() * 2 - 1);
-                firework.style.setProperty('--y', Math.random() * 2 - 1);
+                firework.style.setProperty('--x', `${Math.random() * 200 - 100}%`);
+                firework.style.setProperty('--y', `${Math.random() * 200 - 100}%`);
                 firework.style.left = `${Math.random() * 100}%`;
                 firework.style.top = `${Math.random() * 100}%`;
                 fireworksContainer.appendChild(firework);
