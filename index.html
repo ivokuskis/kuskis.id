@@ -11,14 +11,10 @@
             margin-top: 50px;
             background-color: white;
         }
-        #counter {
-            font-size: 2em;
-            color: #333;
-        }
-        #workdays {
+        #counter, #workdays, #vacation, #donor-days, #military-days, #sleep-time, #sick-days {
             margin-top: 20px;
             font-size: 1.5em;
-            color: #555;
+            color: #333;
         }
         #motivational-text {
             margin-top: 30px;
@@ -33,34 +29,16 @@
             background-color: white;
             overflow: hidden;
         }
-        .firework {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: #ff4500;
-            border-radius: 50%;
-            opacity: 0;
-            animation: firework-animation 1.5s ease-out infinite;
-        }
-        @keyframes firework-animation {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
-            }
-            50% {
-                opacity: 0.6;
-                transform: translate(var(--x), var(--y)) scale(1.5);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--x), var(--y)) scale(0);
-            }
-        }
         #birthdate {
             font-size: 1.5em;
             padding: 10px;
             width: 250px;
             margin-top: 10px;
+        }
+        #date-format {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #555;
         }
         #calculate-button {
             margin-top: 15px;
@@ -75,20 +53,74 @@
         #calculate-button:hover {
             background-color: #218838;
         }
+        .icon {
+            margin-left: 10px;
+            font-size: 1.2em;
+        }
+        .icon-beach {
+            color: #ffa500;
+        }
+        .icon-heart {
+            color: #ff0000;
+            animation: heartbeat 1s infinite;
+        }
+        .icon-sleep {
+            color: #1e90ff;
+        }
+        .icon-medical {
+            color: #ff0000;
+        }
+        .icon-military {
+            color: #006400;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        .button-link {
+            margin-top: 10px;
+            display: inline-block;
+            font-size: 1em;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-link:hover {
+            background-color: #0056b3;
+        }
+        #disclaimer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #555;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
     <h1>Laiks līdz pensijai</h1>
     <p>Ievadiet savu dzimšanas datumu:</p>
     <input type="date" id="birthdate" value="1971-01-05">
+    <p id="date-format">Formāts: mm/dd/gggg</p>
     <button id="calculate-button" onclick="calculatePension()">Skatīt</button>
     <div id="counter"></div>
     <div id="workdays"></div>
+    <div id="vacation"></div>
+    <div id="donor-days">
+        <a href="https://www.vadc.lv/donoriem/donora-pieteikums" target="_blank" class="button-link">Piesakies asins nodošanai</a>
+    </div>
+    <div id="military-days">
+        <a href="https://www.klustikaravirs.lv/pieteikties" target="_blank" class="button-link">Piesakies zemessargos</a>
+    </div>
+    <div id="sleep-time"></div>
+    <div id="sick-days"></div>
     <div id="motivational-text">Strādāt, strādāt un vēlreiz strādāt!</div>
     <div id="fireworks"></div>
+    <div id="disclaimer">* Aprēķini ir informatīvi un balstās uz vidējiem statistikas datiem.</div>
 
     <script>
-        // Latvijas valsts svētku dienas
         const publicHolidays = [
             '2025-01-01', '2025-04-06', '2025-04-07', '2025-05-01',
             '2025-05-04', '2025-06-23', '2025-06-24', '2025-11-18',
@@ -115,11 +147,14 @@
             const pensionDate = new Date(birthdate);
             pensionDate.setFullYear(pensionDate.getFullYear() + pensionAge);
 
-            // Notīrām vecos aprēķinus un apturam intervālus
             clearInterval(interval);
             document.getElementById("counter").innerHTML = "";
             document.getElementById("workdays").innerHTML = "";
-            document.getElementById("fireworks").innerHTML = "";
+            document.getElementById("vacation").innerHTML = "";
+            document.getElementById("donor-days").innerHTML = "";
+            document.getElementById("military-days").innerHTML = "";
+            document.getElementById("sleep-time").innerHTML = "";
+            document.getElementById("sick-days").innerHTML = "";
 
             function updateCounter() {
                 const now = new Date();
@@ -127,7 +162,6 @@
 
                 if (timeLeft <= 0) {
                     document.getElementById("counter").innerText = "Jūs jau esat pensijā!";
-                    document.getElementById("workdays").innerText = "";
                     clearInterval(interval);
                     return;
                 }
@@ -141,7 +175,7 @@
                     `Atlikušais laiks līdz pensijai: ${days} dienas, ${hours} stundas, ${minutes} minūtes, ${seconds} sekundes`;
             }
 
-            function calculateWorkdays() {
+            function calculateWorkdaysAndExtras() {
                 let workdays = 0;
                 let currentDate = new Date();
                 while (currentDate <= pensionDate) {
@@ -150,27 +184,35 @@
                     }
                     currentDate.setDate(currentDate.getDate() + 1);
                 }
+
+                const vacationDays = Math.floor(workdays / 250) * 20;
+                const sleepHours = workdays * 8;
+
+                const yearsToPension = pensionDate.getFullYear() - new Date().getFullYear();
+                const donorDaysMen = yearsToPension * 6;
+                const donorDaysWomen = yearsToPension * 4;
+
+                const sickDaysPerYear = 10000000 / 886000;
+                const totalSickDays = Math.floor(yearsToPension * sickDaysPerYear);
+
+                const militaryDays = yearsToPension * 5;
+
                 document.getElementById("workdays").innerText = `Darba dienu skaits līdz pensijai: ${workdays}`;
+                document.getElementById("vacation").innerHTML = 
+                    `Nopelnītās atvaļinājuma dienas: ${vacationDays} <span class="icon icon-beach">🏖️</span>`;
+                document.getElementById("donor-days").innerHTML = 
+                    `Donoru brīvdienas : vīriešiem (ja gadā nodod asinis 6 reizes) - ${donorDaysMen}, sievietēm (ja gadā nodod asinis 6 reizes) - ${donorDaysWomen} <span class="icon icon-heart">❤️</span>`;
+                document.getElementById("military-days").innerHTML = 
+                    `Zemessardzes kolektīvās apmācības dienas (5 gadā): ${militaryDays} <span class="icon icon-military">🪖</span>`;
+                document.getElementById("sleep-time").innerHTML = 
+                    `Paredzamās gulētās stundas: ${sleepHours} <span class="icon icon-sleep">🛌</span>`;
+                document.getElementById("sick-days").innerHTML = 
+                    `Valsts apmaksātās slimības dienas: ${totalSickDays} <span class="icon icon-medical">⛑️</span>`;
             }
 
             updateCounter();
-            calculateWorkdays();
+            calculateWorkdaysAndExtras();
             interval = setInterval(updateCounter, 1000);
-
-            createFireworks();
-        }
-
-        function createFireworks() {
-            const fireworksContainer = document.getElementById('fireworks');
-            for (let i = 0; i < 50; i++) {
-                const firework = document.createElement('div');
-                firework.className = 'firework';
-                firework.style.setProperty('--x', `${Math.random() * 200 - 100}%`);
-                firework.style.setProperty('--y', `${Math.random() * 200 - 100}%`);
-                firework.style.left = `${Math.random() * 100}%`;
-                firework.style.top = `${Math.random() * 100}%`;
-                fireworksContainer.appendChild(firework);
-            }
         }
     </script>
 </body>
