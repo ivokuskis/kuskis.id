@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="lv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laiks līdz pensijai</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #counter {
+            font-size: 2em;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Laiks līdz pensijai</h1>
+    <p>Ievadiet savu dzimšanas datumu:</p>
+    <input type="date" id="birthdate">
+    <button onclick="calculatePension()">Skatīt</button>
+    <div id="counter"></div>
+
+    <script>
+        function calculatePension() {
+            const birthdate = new Date(document.getElementById("birthdate").value);
+            const pensionAge = 65;
+            const pensionDate = new Date(birthdate);
+            pensionDate.setFullYear(pensionDate.getFullYear() + pensionAge);
+
+            function updateCounter() {
+                const now = new Date();
+                const timeLeft = pensionDate - now;
+
+                if (timeLeft <= 0) {
+                    document.getElementById("counter").innerText = "Jūs jau esat pensijā!";
+                    clearInterval(interval);
+                    return;
+                }
+
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((timeLeft / (1000 * 60)) % 60);
+                const seconds = Math.floor((timeLeft / 1000) % 60);
+
+                document.getElementById("counter").innerText = 
+                    `Atlikušais laiks līdz pensijai: ${days} dienas, ${hours} stundas, ${minutes} minūtes, ${seconds} sekundes`;
+            }
+
+            updateCounter();
+            const interval = setInterval(updateCounter, 1000);
+        }
+    </script>
+</body>
+</html>
